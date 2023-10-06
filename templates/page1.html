@@ -18,6 +18,34 @@
             padding-bottom: 10px;
         }
 
+         /* 추가된 스타일 */
+         .menu {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .menu a, .logout-button {
+            padding: 5px 15px;
+            background-color: #222;
+            color: #ff4444;
+            border: 2px solid #ff4444;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .menu a:hover, .logout-button:hover {
+            background-color: #333;
+        }
+
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -40,6 +68,12 @@
 </head>
 
 <body>
+    <div class="menu">
+        <a href="/main">home</a>
+        <a href="/page1">Page 01</a>
+        <a href="/page2">Page 02</a>
+    </div>
+    <button class="logout-button" onclick="location.href='/logout'">Logout</button>
     <h1>Target Profiles</h1>
     <table>
         <thead>

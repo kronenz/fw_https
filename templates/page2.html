@@ -31,6 +31,33 @@
             transition: background-color 0.2s; /* Smooth transition for hover effects */
         }
 
+        .menu {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 15px;
+        }
+
+        .menu a, .logout-button {
+            padding: 8px 16px;
+            background-color: #0099cc; /* Strong blue to match the table headers */
+            color: white;
+            border: 2px solid #ff9933; /* Orange border for some pop */
+            text-decoration: none;
+            transition: background-color 0.2s;
+            border-radius: 5px; /* Rounded corners */
+        }
+
+        .menu a:hover, .logout-button:hover {
+            background-color: #ff9933; /* Orange hover */
+            color: black; /* Text color change on hover */
+        }
+
+        .logout-button {
+            cursor: pointer;
+            display: inline-block; /* To properly apply padding */
+            margin-top: 10px;
+        }
+        
         th {
             background-color: #0099cc; /* Strong blue for header background */
             color: white; /* White text for headers */
@@ -53,6 +80,12 @@
 </head>
 
 <body>
+    <div class="menu">
+        <a href="/main">home</a>
+        <a href="/page1">Page 01</a>
+        <a href="/page2">Page 02</a>
+    </div>
+    <button class="logout-button" onclick="location.href='/logout'">Logout</button>
     <h1>Important Account Details</h1>
     <table>
         <thead>

@@ -1,8 +1,7 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
-from fastapi.request import Request
 
 import secrets
 import uvicorn
@@ -12,12 +11,7 @@ templates = Jinja2Templates(directory="templates")
 security = HTTPBasic()
 
 # Mock user data (in a real-world scenario, you'd use a database)
-users = {"admin": "password",
-    "johnDoe": "johnd123",
-    "aliceSmith": "aliceS456",
-    "bobBrown": "bobB789",
-    "charlieGreen": "charlieG101",
-    "eveWhite": "eveW202"}
+users = {"admin": "password"}
 
 # Keeping track of logged in users (using tokens for simplicity, but you'd want a more secure approach in production)
 logged_in_users = []
@@ -34,11 +28,12 @@ def get_optional_token(request: Request):
 def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     # 사용자가 존재하는지 확인
     user_password = users.get(credentials.username)
-    
+    print(user_password)
     # 사용자가 존재하면 비밀번호 확인, 그렇지 않으면 인증 실패
     if user_password and secrets.compare_digest(credentials.password, user_password):
         return credentials.username
     else:
+        print("login error")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -62,22 +57,25 @@ def login_page(request: Request, token: str = Depends(get_optional_token)):
 def login(username: str = Depends(get_current_username)):
     token = secrets.token_urlsafe(16)
     logged_in_users.append(token)
-    # 로그인에 성공하면 메인 페이지로 리다이렉트하고, 이동한 메인 페이지에서는 토큰을 사용하여 인증을 처리할 수 있습니다.
-    response = RedirectResponse(url="/main")
-    response.set_cookie(key="token", value=token)  # 선택사항: 메인 페이지에서 토큰을 사용하려면 쿠키에 토큰을 설정할 수 있습니다.
+    response = RedirectResponse(url="/", status_code=303)
+    response.set_cookie(key="token", value=token)
     return response
 
 @app.get("/logout")
-def logout(token: str):
-    if token in logged_in_users:
-        logged_in_users.remove(token)
-        return {"message": "You have been logged out!"}
+def logout(token: str = Depends(get_optional_token)):
+    if token:
+        if token in logged_in_users:
+            logged_in_users.remove(token)
+        return RedirectResponse(url="/")
     return {"error": "Invalid token or user already logged out"}
 
 @app.get("/main")
 def main_page(request: Request, token: str = Depends(get_optional_token)):
+    print("call main")
     if not token:
         return RedirectResponse(url="/")
+    
+    print(token)
     return templates.TemplateResponse("main.html", {"request": request})
 
 @app.get("/page1")

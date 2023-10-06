@@ -35,11 +35,55 @@
         tr:hover {
             background-color: #333;
         }
+
+                /* 추가된 메뉴 스타일 */
+                .menu {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .menu a {
+            color: #0f0;
+            text-decoration: none;
+            padding: 5px;
+            border: 1px solid #0f0;
+            transition: background-color 0.3s;
+        }
+
+        .menu a:hover {
+            background-color: #333;
+        }
+
+                /* 로그아웃 버튼 스타일 */
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 5px 15px;
+            background-color: #222;
+            color: #0f0;
+            border: 2px solid #0f0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .logout-button:hover {
+            background-color: #333;
+        }
     </style>
 </head>
 
 <body>
     <h1>Classified IPs</h1>
+    <div class="menu">
+        <a href="/main">home</a>
+        <a href="/page1">Page 01</a>
+        <a href="/page2">Page 02</a>
+    </div>
+    <button class="logout-button" onclick="location.href='/logout'">Logout</button>
     <table>
         <thead>
             <tr>

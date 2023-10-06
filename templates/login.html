@@ -1,45 +1,128 @@
-<!-- templates/login.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* 간단한 스타일링 */
+        /* 추가적인 스타일링 */
         body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
+            background-color: #000;
+            overflow: hidden;
+            margin: 0;
         }
-        .login-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .matrix-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .matrix-code {
+            color: green;
+            font-family: "Courier New", monospace;
+            position: absolute;
+            opacity: 0.6;
+        }
+        /* Login 제목 스타일 */
+        h2 {
+            background-color: black;
+            color: green;
+            padding: 10px;
+            border: 1px solid green;
+            border-radius: 5px;
+            text-align: center;
+        }
+        /* Username과 Password 레이블 스타일 */
+        label {
+            background-color: black;
+            color: white;
+            padding: 5px;
+            border: 1px solid white;
+            border-radius: 5px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <form action="/login" method="post">
-            <div>
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username">
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="container">
+        
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-12 col-md-6">
+                
+                <div class="login-container">
+                    <!-- Login 제목에 테두리 적용 -->
+                    <h2 class="mb-4">Login</h2>
+                    <form action="/login" method="post">
+                        <div class="mb-3">
+                            <!-- Username 레이블 스타일 적용 -->
+                            <label for="username" class="form-label">Username:</label>
+                            <input type="text" id="username" name="username" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <!-- Password 레이블 스타일 적용 -->
+                            <label for="password" class="form-label">Password:</label>
+                            <input type="password" id="password" name="password" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password">
-            </div>
-            <div>
-                <button type="submit">Login</button>
-            </div>
-        </form>
+        </div>
     </div>
+    <script>
+        // JavaScript를 사용하여 매트릭스 비트 애니메이션을 추가합니다.
+        const matrixBg = document.querySelector('.matrix-bg');
+        const characters = "01";
+        
+        function createMatrixCode() {
+            const code = document.createElement('div');
+            code.className = 'matrix-code';
+            code.style.left = `${Math.random() * 100}%`;
+            code.style.top = `${Math.random() * 100}%`;
+            code.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            code.style.opacity = Math.random();
+            code.innerHTML = characters[Math.floor(Math.random() * characters.length)];
+            matrixBg.appendChild(code);
+
+            code.addEventListener('animationiteration', () => {
+                code.remove();
+                createMatrixCode();
+            });
+        }
+
+        // 여러 줄의 매트릭스 비트 생성
+        for (let i = 0; i < 100; i++) { // 밀도 높임
+            setTimeout(() => {
+                createMatrixCode();
+            }, i * 50);
+        }
+    </script>
 </body>
 </html>
