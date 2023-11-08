@@ -1,7 +1,8 @@
-from fastapi import FastAPI, Depends, HTTPException, status, Request
+from fastapi import FastAPI, Depends, HTTPException, status, Request, Form
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
+from typing import Annotated
 
 import secrets
 import uvicorn
@@ -16,9 +17,6 @@ users = {"admin": "password"}
 # Keeping track of logged in users (using tokens for simplicity, but you'd want a more secure approach in production)
 logged_in_users = []
 
-
-
-
 def get_optional_token(request: Request):
     token = request.cookies.get("token")
     if token in logged_in_users:
@@ -31,14 +29,11 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     print(user_password)
     # 사용자가 존재하면 비밀번호 확인, 그렇지 않으면 인증 실패
     if user_password and secrets.compare_digest(credentials.password, user_password):
-        return credentials.username
+        return True
     else:
+        return False
         print("login error")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Basic"},
-        )
+
     
 @app.get("/login-failed")
 def login_failed():
@@ -52,14 +47,47 @@ def login_page(request: Request, token: str = Depends(get_optional_token)):
     # 그렇지 않은 경우 로그인 페이지를 보여줍니다.
     return templates.TemplateResponse("login.html", {"request": request})
 
-
 @app.post("/login")
-def login(username: str = Depends(get_current_username)):
+def login_post(request: Request, username: Annotated[str, Form()], password: Annotated[str, Form()]):
+    # 사용자 이름과 비밀번호를 가져옵니다.
+    print(request)
+    # username = request.form.get("username")
+    # password = request.form.get("password")
+
+    if username not in users or users[username] != password:
+        return HTMLResponse("로그인 실패", status_code=401)
+    
     token = secrets.token_urlsafe(16)
     logged_in_users.append(token)
-    response = RedirectResponse(url="/", status_code=303)
+    response = RedirectResponse(url="/main", status_code=303)
     response.set_cookie(key="token", value=token)
     return response
+
+    # # 사용자 정보가 유효한지 확인합니다.
+    # iscurrent = get_current_username(username)
+    # if iscurrent == True: 
+    #     token = secrets.token_urlsafe(16)
+    #     logged_in_users.append(token)
+    #     response = RedirectResponse(url="/main", status_code=303)
+    #     response.set_cookie(key="token", value=token)
+    # else:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_401_UNAUTHORIZED,
+    #         detail="Incorrect username or password",
+    #         headers={"WWW-Authenticate": "Basic"},
+    #     )
+    
+    
+
+    # # 로그인 성공
+    # # 세션 쿠키를 생성합니다.
+    # session = request.session
+    # session["username"] = username
+    # session.set_cookie(name="session_id", value=session.id, httponly=True, secure=True)
+
+    # # 로그인 성공 시 main.html로 리다이렉트합니다.
+    # return redirect("/main")
+
 
 @app.get("/logout")
 def logout(token: str = Depends(get_optional_token)):
